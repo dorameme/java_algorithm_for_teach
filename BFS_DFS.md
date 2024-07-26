@@ -42,15 +42,10 @@ C  E F
 | 적합성 | BFS는 주어진 타겟에 더 가까운 정점을 검색하는 데 적합 | DFS는 타겟과 떨어진 곳에 솔루션이 있을 때 적합 |
 | 응용 |  최단 경로 | 검색 대상 그래프가 큰 경우 |
 
-#### 4. 반복적DFS vs재귀적DFS
-일반적으로 반복적 DFS보다 재귀적 DFS가 필요에 더 적합하다. 
-
-1. **코드는 단순하고 자연스럽게 유지하는 것이 중요하다**: 재귀적 구현은 코드가 간결하고 이해하기 쉬우며, 유지보수가 용이하다.
-2. **소프트웨어 엔지니어링에서는 대부분 성능보다 유지 관리가 중요하다**: 성능보다는 유지 관리 측면에서 재귀적 구현이 더 자연스럽고 유지보수가 편하므로, DFS는 대부분 재귀적으로 구현한다.
 
 
 
-#### 5. DFS와 BFS의 적합한 유형
+#### 4. DFS와 BFS의 적합한 유형
 
 ####  ✨ DFS, BFS 모두 적합한 유형
  -모든 정점을 방문하는 것이 중요한 경우.
@@ -61,7 +56,15 @@ C  E F
 
 #### ✨ BFS가 적합한 유형
  -최단 경로를 구해야 할 때.경로 탐색 시 첫 번째로 찾아지는 해답이 곧 최단거리이다.
-#### 6. 반복적 DFS와 재귀적 DFS의 차이점
+
+ 
+#### 6. 반복적DFS vs재귀적DFS
+일반적으로 반복적 DFS보다 재귀적 DFS가 필요에 더 적합하다. 
+
+1. **코드는 단순하고 자연스럽게 유지하는 것이 중요하다**: 재귀적 구현은 코드가 간결하고 이해하기 쉬우며, 유지보수가 용이하다.
+2. **소프트웨어 엔지니어링에서는 대부분 성능보다 유지 관리가 중요하다**: 성능보다는 유지 관리 측면에서 재귀적 구현이 더 자연스럽고 유지보수가 편하므로, DFS는 대부분 재귀적으로 구현한다.
+   
+#### 5. 반복적 DFS와 재귀적 DFS의 차이점
 
 | **매개변수**           | **반복적 DFS**                           | **재귀적 DFS**                        |
 |------------------------|-----------------------------------------|--------------------------------------|
@@ -78,3 +81,71 @@ C  E F
 문제의 성격에 따라 적절히 선택하여 사용할 수 있다. (왠만한 알고리즘에선 거의 재귀적DFS사용) 
 
 일반적으로 코드의 단순성과 유지보수를 고려하여 재귀적 DFS를 많이 사용하지만, 탐색 깊이가 깊어질 경우에는 반복적 DFS가 더 유리할 수 있다.
+
+#### 7.  반복적DFS vs재귀적DFS 코드 비교
+
+```
+public class Main {
+
+    static int N, M, R, cnt = 1;
+    static int[] vis;
+    static ArrayList<Integer>[] arr;
+    static ArrayDeque<Integer> stack = new ArrayDeque<>();
+    static int[] answer;
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer tk = new StringTokenizer(br.readLine());
+        N = Integer.parseInt(tk.nextToken());
+        M = Integer.parseInt(tk.nextToken());
+        R = Integer.parseInt(tk.nextToken());
+        answer = new int[N + 1];
+
+        arr = new ArrayList[N + 1];
+        for (int i = 0; i <= N; i++) {
+            arr[i] = new ArrayList<>();
+        }
+
+        vis = new int[N + 1];
+
+        stack.add(R);
+        for (int i = 0; i < M; i++) {
+            tk = new StringTokenizer(br.readLine());
+            int x = Integer.parseInt(tk.nextToken());
+            int y = Integer.parseInt(tk.nextToken());
+            arr[x].add(y);
+            arr[y].add(x);
+        }
+        Arrays.stream(arr).forEach(Collections::sort);
+
+        dfs();
+        IntStream.range(1, N + 1).forEach(x -> System.out.println(answer[x]));
+    }
+
+    static void dfs() {
+        stack.add(R);
+        while (!stack.isEmpty()) {
+            int cur = stack.pollLast();
+            if (vis[cur] == 1) {
+                continue;
+            } else {
+                vis[cur] = 1;
+                answer[cur] = cnt++;
+                for (int i = arr[cur].size() - 1; i >= 0; i--) {
+                    stack.add(arr[cur].get(i));
+                }
+            }
+        }
+    }
+
+    static void recursive_dfs(int cur) {
+        if (vis[cur] == 1) {
+            return;
+        } else {
+            vis[cur] = 1;
+            answer[cur] = cnt++;
+        }
+        arr[cur].forEach(Main::recursive_dfs);
+    }
+}
+```
